@@ -18,7 +18,9 @@ struct PandaPlaces: View {
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .navigationBarHidden(true)
+        .navigationBarTitle("Panda Places")
+        .navigationBarTitleDisplayMode(.inline)
+        
         .task {
             do {
                 try await fetcher.fetchData()

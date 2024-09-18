@@ -1,7 +1,8 @@
 import SwiftUI
 
 struct MemeCreator: View, Sendable {
-    @EnvironmentObject var fetcher: PandaCollectionFetcher
+    @EnvironmentObject var collectionFetcher: PandaCollectionFetcher
+    @EnvironmentObject var placesFetcher: PandaPlacesFetcher
     
     @State private var memeText = ""
     @State private var textSize = 60.0
@@ -17,7 +18,7 @@ struct MemeCreator: View, Sendable {
     var body: some View {
         VStack(alignment: .center) {
             Spacer()
-            LoadableImage(imageMetaData: fetcher.currentPanda, cachedImage: $memeImage, size: $memeSize)
+            LoadableImage(imageMetaData: collectionFetcher.currentPanda, cachedImage: $memeImage, size: $memeSize)
                 .overlay(alignment: .bottom) {
                     TextField(
                         "Address",
@@ -57,9 +58,12 @@ struct MemeCreator: View, Sendable {
             
             HStack {
                 Button {
-                    if let randomImage = fetcher.imageData.sample.randomElement() {
-                        fetcher.currentPanda = randomImage
+                    if let randomImage = collectionFetcher.imageData.sample.randomElement() {
+                        collectionFetcher.currentPanda = randomImage
                     }
+                    
+                    isFocused = false
+                    memeText = ""
                 } label: {
                     VStack {
                         Image(systemName: "photo.on.rectangle.angled")
@@ -94,17 +98,25 @@ struct MemeCreator: View, Sendable {
         .padding()
         .task {
             do {
-                try await fetcher.fetchData()
+                try await collectionFetcher.fetchData()
             } catch {
                 errorMessage = error.localizedDescription
             }
         }
         .navigationTitle("Meme Creator")
         .toolbar(content: {
-            ShareLink(
-                item: snapshot,
-                preview: SharePreview(memeText, image: snapshot)
-            )
+            ToolbarItem() {
+                NavigationLink(destination: PandaPlaces().environmentObject(placesFetcher)) {
+                    Image(systemName: "map")
+                }
+            }
+            
+            ToolbarItem() {
+                ShareLink(
+                    item: snapshot,
+                    preview: SharePreview(memeText, image: snapshot)
+                )
+            }
         })
     }
     

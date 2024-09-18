@@ -8,9 +8,8 @@ struct MemeCreatorApp: App {
     var body: some Scene {
         WindowGroup {
             NavigationStack {
-//                MemeCreator()
-//                    .environmentObject(collectionFetcher)
-                PandaPlaces()
+                MemeCreator()
+                    .environmentObject(collectionFetcher)
                     .environmentObject(placesFetcher)
             }
             .navigationViewStyle(.stack)

@@ -24,8 +24,11 @@ struct LoadableImage: View {
                                 .onPreferenceChange(SizePreferenceKey.self) { size = $0 }
                         }
                     }
+                    .onAppear {
+                        let _ = cacheImage(image)
+                    }
                 
-                let _ = cacheImage(image)
+                
                 
             } else if phase.error != nil {
                 VStack {
